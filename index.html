@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Level Projection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-900 text-white min-h-screen font-sans">
+    <div class="max-w-4xl mx-auto py-10 px-4">
+      <h1 class="text-3xl font-bold mb-6 text-center">
+        Level Join Requirements [<span class="text-red-500">abs9660</span>]
+      </h1>
+      <div class="overflow-x-auto">
+        <table
+          class="w-full text-left border border-gray-700 rounded-lg overflow-hidden"
+        >
+          <thead class="bg-gray-800">
+            <tr>
+              <th class="px-4 py-3 border-b border-gray-700">Day</th>
+              <th class="px-4 py-3 border-b border-gray-700">Join Today</th>
+              <th class="px-4 py-3 border-b border-gray-700">
+                Level Needed Before Tomorrow
+              </th>
+            </tr>
+          </thead>
+          <tbody id="level-table" class="divide-y divide-gray-800 bg-gray-950">
+            <!-- Table rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const startLevel = 15007;
+      const finalLevel = 16005;
+      const switchLevel = 16000;
+      const gainBeforeSwitch = 8;
+      const gainAfterSwitch = 6;
+      const startDate = new Date("2025-05-24T05:30:00");
+      const table = document.getElementById("level-table");
+
+      let currentLevel = startLevel;
+      let day = 1;
+      let currentDate = new Date(startDate);
+
+      while (currentLevel < finalLevel) {
+        const dailyGain =
+          currentLevel < switchLevel ? gainBeforeSwitch : gainAfterSwitch;
+        const joinToday = currentLevel;
+        const joinTomorrow = Math.min(currentLevel + dailyGain, finalLevel);
+        const tomorrowDate = new Date(currentDate.getTime() + 86400000);
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="px-4 py-3 text-gray-400 font-semibold">Day ${day}</td>
+          <td class="px-4 py-3">
+            <span class="text-gray-400">After 5:30 AM ${currentDate.toLocaleDateString(
+              "en-GB"
+            )}</span><br>
+            <span class="text-yellow-400 font-bold">${joinToday}</span>
+          </td>
+          <td class="px-4 py-3">
+            <span class="text-gray-400">Before 5:30 AM ${tomorrowDate.toLocaleDateString(
+              "en-GB"
+            )}</span><br>
+            <span class="text-green-400 font-bold">${joinTomorrow}</span>
+          </td>
+        `;
+
+        table.appendChild(row);
+
+        currentLevel += dailyGain;
+        currentDate.setDate(currentDate.getDate() + 1);
+        day++;
+      }
+    </script>
+  </body>
+</html>
